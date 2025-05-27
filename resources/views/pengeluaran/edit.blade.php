@@ -3,156 +3,129 @@
 @section('title', 'Edit Pengeluaran Stok')
 
 @section('content')
-<div class="container">
-    <h2 class="page-title">Edit Pengeluaran Stok</h2>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f6f8;
+        color: #333;
+    }
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        background: white;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        color: #2c3e50;
+        font-weight: 700;
+        text-align: center;
+    }
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+    }
+    input[type="number"], input[type="date"], select, textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1.5px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        margin-bottom: 20px;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 5px rgba(52,152,219,0.5);
+    }
+    button {
+        background-color: #3498db;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+        font-size: 1.1rem;
+    }
+    button:hover {
+        background-color: #2980b9;
+    }
+    .btn-secondary {
+        background-color: #7f8c8d;
+        margin-top: 10px;
+        text-align: center;
+        display: inline-block;
+        width: auto;
+        padding: 10px 20px;
+        border-radius: 8px;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+    .btn-secondary:hover {
+        background-color: #636e72;
+    }
+    .error-list {
+        background-color: #fdecea;
+        color: #d93025;
+        border: 1px solid #d93025;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        list-style-type: disc;
+        list-style-position: inside;
+    }
+</style>
 
-    @if ($errors->any())
-        <div class="alert alert-error">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>- {{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+<div class="container">
+    <h2>Edit Pengeluaran Stok</h2>
+
+    @if($errors->any())
+    <ul class="error-list">
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
     @endif
 
-    <form action="{{ route('pengeluaran.update', $pengeluaran) }}" method="POST" class="form-custom">
+    <form action="{{ route('pengeluaran.update', $pengeluaran->id) }}" method="POST">
         @csrf
         @method('PUT')
 
-        <label for="item_id">Pilih Barang</label>
+        <label for="item_id">Barang</label>
         <select name="item_id" id="item_id" required>
-            <option value="" disabled>-- Pilih Barang --</option>
+            <option value="">-- Pilih Barang --</option>
             @foreach($items as $item)
-                <option value="{{ $item->id }}" {{ (old('item_id', $pengeluaran->item_id) == $item->id) ? 'selected' : '' }}>
+                <option value="{{ $item->id }}" {{ old('item_id', $pengeluaran->item_id) == $item->id ? 'selected' : '' }}>
                     {{ $item->nama_barang }}
                 </option>
             @endforeach
         </select>
 
         <label for="jumlah_keluar">Jumlah Keluar</label>
-        <input type="number" name="jumlah_keluar" id="jumlah_keluar" min="1" value="{{ old('jumlah_keluar', $pengeluaran->jumlah_keluar) }}" required>
+        <input type="number" id="jumlah_keluar" name="jumlah_keluar" value="{{ old('jumlah_keluar', $pengeluaran->jumlah_keluar) }}" min="1" required>
 
         <label for="tanggal_keluar">Tanggal Keluar</label>
-        <input type="date" name="tanggal_keluar" id="tanggal_keluar" value="{{ old('tanggal_keluar', $pengeluaran->tanggal_keluar?->format('Y-m-d')) }}" required>
+        <input type="date" id="tanggal_keluar" name="tanggal_keluar" value="{{ old('tanggal_keluar', optional($pengeluaran->tanggal_keluar)->format('Y-m-d')) }}" required>
 
-        <label for="keterangan">Keterangan (opsional)</label>
-        <textarea name="keterangan" id="keterangan" rows="3">{{ old('keterangan', $pengeluaran->keterangan) }}</textarea>
+        <label for="keterangan">Keterangan (optional)</label>
+        <textarea id="keterangan" name="keterangan" rows="3">{{ old('keterangan', $pengeluaran->keterangan) }}</textarea>
 
-        <button type="submit" class="btn btn-success">Perbarui</button>
-        <a href="{{ route('pengeluaran.index') }}" class="btn btn-cancel">Batal</a>
+        <button type="submit">Update Pengeluaran</button>
     </form>
+
+    <a href="{{ route('pengeluaran.index') }}" class="btn-secondary">Batal</a>
 </div>
-
-<style>
-    /* Sama persis seperti create.blade.php */
-    .container {
-        max-width: 600px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
-    }
-
-    .page-title {
-        margin-bottom: 1.5rem;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #2c3e50;
-    }
-
-    .alert-error {
-        background-color: #f8d7da;
-        color: #842029;
-        border: 1px solid #f5c2c7;
-        padding: 1rem;
-        border-radius: 5px;
-        margin-bottom: 1.5rem;
-    }
-
-    ul {
-        margin-left: 1.25rem;
-    }
-
-    form.form-custom {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    label {
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-    }
-
-    input[type="number"],
-    input[type="date"],
-    select,
-    textarea {
-        padding: 0.5rem 0.75rem;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 1rem;
-        transition: border-color 0.3s ease;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    input[type="number"]:focus,
-    input[type="date"]:focus,
-    select:focus,
-    textarea:focus {
-        border-color: #27ae60;
-        outline: none;
-    }
-
-    textarea {
-        resize: vertical;
-    }
-
-    .btn {
-        display: inline-block;
-        padding: 0.6rem 1.2rem;
-        font-size: 1rem;
-        font-weight: 600;
-        border-radius: 5px;
-        cursor: pointer;
-        user-select: none;
-        border: none;
-        color: #fff;
-        text-align: center;
-        transition: background-color 0.3s ease;
-        text-decoration: none;
-        margin-top: 1rem;
-        width: fit-content;
-    }
-
-    .btn-success {
-        background-color: #27ae60;
-    }
-    .btn-success:hover {
-        background-color: #219150;
-    }
-
-    .btn-cancel {
-        background-color: #95a5a6;
-        margin-left: 1rem;
-        color: #fff;
-        text-decoration: none;
-        padding: 0.6rem 1.2rem;
-        border-radius: 5px;
-    }
-    .btn-cancel:hover {
-        background-color: #7f8c8d;
-    }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-        .btn-cancel {
-            display: block;
-            margin-left: 0;
-            margin-top: 0.5rem;
-        }
-    }
-</style>
 @endsection
