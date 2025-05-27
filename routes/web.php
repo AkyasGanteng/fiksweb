@@ -8,6 +8,8 @@ use App\Http\Controllers\PemasukanStokController;
 use App\Http\Controllers\PengeluaranStokController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ProfileController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -52,7 +54,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('pengeluaran', PengeluaranStokController::class);
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::resource('suppliers', SupplierController::class);
-
-
-});
+    });
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile')->middleware('auth');
 
